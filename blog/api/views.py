@@ -35,9 +35,10 @@ class TagViewSet(viewsets.ModelViewSet):
 
     # https://www.django-rest-framework.org/api-guide/viewsets/
     @action(methods=["get"], detail=True, name="Posts with the Tag")
-    def posts(self, request, pk=None):
+    def posts(self, request):
         # Updated for pagination
         # https://www.django-rest-framework.org/api-guide/pagination/#pagenumberpagination
+        
         tag = self.get_object()
         
         page = self.paginate_queryset(tag.posts.all())
@@ -51,6 +52,13 @@ class TagViewSet(viewsets.ModelViewSet):
             tag.posts, many=True, context={"request": request}
         )
         return Response(post_serializer.data)
+    
+    @action(detail=True, methods=['get'])
+    def custom_action(self, request):
+        instance = self.get_object()
+        # Custom logic for handling GET requests on a specific instance
+        return Response({'message': f'Custom action response for instance with ID {pk}'})
+
     
     @method_decorator(cache_page(300))
     def list(self, *args, **kwargs):
@@ -116,7 +124,7 @@ class PostViewSet(viewsets.ModelViewSet):
     
     # Will list only Post objects for which the current user is the author.
     # Caches the response from this view, for 5 min.
-    @method_decorator(cache_page(300))
+    @method_decorator(cache_page(300))  
     # vary_on_headers accepts multiple header names as arguments so removed vary_on_cookie to simplify code.
     @method_decorator(vary_on_headers("Authorization", "Cookie"))
     @action(methods=["get"], detail=False, name="Posts by the logged in user")
@@ -165,6 +173,21 @@ class UserDetail(generics.RetrieveAPIView):
     def get(self, *args, **kwargs):
         return super(UserDetail, self).get(*args, *kwargs)
 
+class CustomViewSet(viewsets.ViewSet):
+    """
+    Example empty viewset demonstrating the standard
+    actions that will be handled by a router class.
+
+    If you're using format suffixes, make sure to also include
+    the `format=None` keyword argument for each action.
+    """
+    @action(detail=False, methods=['get'])
+    def custom_action(self, request):
+        # Custom logic for handling GET requests
+        return Response({'message': 'Custom action response'})
+
+    def list(self, request):
+        return Response({'message': 'Custom action response'})
 
 
 
