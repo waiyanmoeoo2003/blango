@@ -10,7 +10,7 @@ from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from drf_yasg import openapi 
 from drf_yasg.views import get_schema_view
 
-from blog.api.views import PostViewSet, UserDetail, TagViewSet 
+from blog.api.views import PostViewSet, UserDetail, TagViewSet , CustomViewSet
 
 
 
@@ -18,6 +18,7 @@ from blog.api.views import PostViewSet, UserDetail, TagViewSet
 router = DefaultRouter()
 router.register("tags", TagViewSet)
 router.register("posts", PostViewSet)
+router.register("customerset", CustomViewSet, basename = 'my-non-model')
 
 schema_view = get_schema_view(
     openapi.Info(
